@@ -6,29 +6,32 @@
   <script src="https://cheerpj.com/latest/loader.js"></script>
   <style>
     html, body { height: 100%; margin: 0; }
-    #app { height: 100vh; display: flex; flex-direction: column; gap: 12px; padding: 12px; }
-    #cj-display { flex: 1 1 auto; min-height: 400px; border: 1px solid #ccc; }
+    #wrap { height: 100vh; display: flex; flex-direction: column; gap: 12px; padding: 12px; }
+    #cj-display { flex: 1 1 auto; min-height: 420px; border: 1px solid #ccc; }
   </style>
 </head>
 <body>
-  <div id="app">
+  <div id="wrap">
     <button id="run">Run Milestone4</button>
-    <!-- CheerpJ will render the AWT/Swing window here -->
     <div id="cj-display"></div>
   </div>
 
   <script>
-    (async () => { await cheerpjInit(); })();
+    // Initialize once, early
+    (async () => { await cheerpjInit({ /* javaVersion: 17 */ }); })();
 
     document.getElementById('run').addEventListener('click', async () => {
       try {
-        // create the display surface for Swing/AWT
-        await cheerpjCreateDisplay(document.getElementById('cj-display'));
-        // run the jar (match exact filename & case)
-        await cheerpjRunJar('Milestone4.jar');
+        await cheerpjInit(); // safe if already initialized
+        // Correct signature: (width, height, parentElement?)
+        if (typeof cheerpjCreateDisplay === 'function') {
+          cheerpjCreateDisplay(-1, -1, document.getElementById('cj-display'));
+        }
+        const exit = await cheerpjRunJar('Milestone4.jar'); // match exact filename & case
+        console.log('App exited with code', exit);
       } catch (e) {
         console.error(e);
-        alert('Error starting app. See console for details.');
+        alert('Failed to start. Check Console (F12) → Console/Network for details.');
       }
     });
   </script>
