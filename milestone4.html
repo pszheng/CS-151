@@ -4,36 +4,25 @@
   <meta charset="utf-8" />
   <title>Milestone4 (CheerpJ)</title>
   <script src="https://cheerpj.com/latest/loader.js"></script>
-  <style>
-    html, body { height: 100%; margin: 0; }
-    #wrap { height: 100vh; display: flex; flex-direction: column; gap: 12px; padding: 12px; }
-    #cj-display { flex: 1 1 auto; min-height: 420px; border: 1px solid #ccc; }
-  </style>
 </head>
 <body>
-  <div id="wrap">
-    <button id="run">Run Milestone4</button>
-    <div id="cj-display"></div>
-  </div>
+  <button id="run">Run Milestone4</button>
 
   <script>
-    // Initialize once, early
-    (async () => { await cheerpjInit({ /* javaVersion: 17 */ }); })();
-
-    document.getElementById('run').addEventListener('click', async () => {
-      try {
-        await cheerpjInit(); // safe if already initialized
-        // Correct signature: (width, height, parentElement?)
-        if (typeof cheerpjCreateDisplay === 'function') {
-          cheerpjCreateDisplay(-1, -1, document.getElementById('cj-display'));
+    (async () => {
+      // Ensure CheerpJ runtime is ready before wiring the click handler
+      await cheerpjInit();
+      document.getElementById('run').addEventListener('click', async () => {
+        try {
+          // IMPORTANT: filename + case must match exactly in your repo
+          // Your repo shows "Milestone4.jar" with a capital M
+          await cheerpjRunJar('Milestone4.jar');
+        } catch (e) {
+          console.error(e);
+          alert('Failed to start. See DevTools Console for details.');
         }
-        const exit = await cheerpjRunJar('Milestone4.jar'); // match exact filename & case
-        console.log('App exited with code', exit);
-      } catch (e) {
-        console.error(e);
-        alert('Failed to start. Check Console (F12) → Console/Network for details.');
-      }
-    });
+      });
+    })();
   </script>
 </body>
 </html>
