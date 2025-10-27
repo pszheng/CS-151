@@ -2,12 +2,35 @@
 <html>
 <head>
   <meta charset="utf-8" />
+  <title>Milestone4 (CheerpJ)</title>
   <script src="https://cheerpj.com/latest/loader.js"></script>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    #app { height: 100vh; display: flex; flex-direction: column; gap: 12px; padding: 12px; }
+    #cj-display { flex: 1 1 auto; min-height: 400px; border: 1px solid #ccc; }
+  </style>
 </head>
 <body>
-  <button onclick="cheerpjRunJar('./Milestone4.jar')">Run Milestone4</button>
+  <div id="app">
+    <button id="run">Run Milestone4</button>
+    <!-- CheerpJ will render the AWT/Swing window here -->
+    <div id="cj-display"></div>
+  </div>
+
   <script>
     (async () => { await cheerpjInit(); })();
+
+    document.getElementById('run').addEventListener('click', async () => {
+      try {
+        // create the display surface for Swing/AWT
+        await cheerpjCreateDisplay(document.getElementById('cj-display'));
+        // run the jar (match exact filename & case)
+        await cheerpjRunJar('Milestone4.jar');
+      } catch (e) {
+        console.error(e);
+        alert('Error starting app. See console for details.');
+      }
+    });
   </script>
 </body>
 </html>
