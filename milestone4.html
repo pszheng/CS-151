@@ -3,25 +3,41 @@
 <head>
   <meta charset="utf-8" />
   <title>Milestone4 (CheerpJ)</title>
-  <script src="https://cheerpj.com/latest/loader.js"></script>
+  <!-- defer so the script loads before our inline code runs -->
+  <script src="https://cheerpj.com/latest/loader.js" defer crossorigin="anonymous"></script>
 </head>
 <body>
   <button id="run">Run Milestone4</button>
 
   <script>
+    // Wait until cheerpjInit exists (in case of slow CDN/cache)
+    async function waitForCheerpJ() {
+      for (let i = 0; i < 50; i++) {           // ~5s total
+        if (typeof window.cheerpjInit === "function") return;
+        await new Promise(r => setTimeout(r, 100));
+      }
+      throw new Error("CheerpJ loader failed to initialize.");
+    }
+
     (async () => {
-      // Ensure CheerpJ runtime is ready before wiring the click handler
-      await cheerpjInit();
-      document.getElementById('run').addEventListener('click', async () => {
-        try {
-          // IMPORTANT: filename + case must match exactly in your repo
-          // Your repo shows "Milestone4.jar" with a capital M
-          await cheerpjRunJar('Milestone4.jar');
-        } catch (e) {
-          console.error(e);
-          alert('Failed to start. See DevTools Console for details.');
-        }
-      });
+      try {
+        await waitForCheerpJ();
+        await cheerpjInit();                   // initialize runtime :contentReference[oaicite:0]{index=0}
+
+        document.getElementById('run').addEventListener('click', async () => {
+          try {
+            // Use the documented /app/ prefix for files served from your site root
+            // (GitHub Pages mounts your repo at /CS-151/, CheerpJ maps it to /app/) :contentReference[oaicite:1]{index=1}
+            await cheerpjRunJar('/app/Milestone4.jar');  // runs Main-Class in the JAR :contentReference[oaicite:2]{index=2}
+          } catch (e) {
+            console.error(e);
+            alert('Failed to start JAR. See Console.');
+          }
+        });
+      } catch (e) {
+        console.error(e);
+        alert('CheerpJ runtime did not load. See Console/Network.');
+      }
     })();
   </script>
 </body>
